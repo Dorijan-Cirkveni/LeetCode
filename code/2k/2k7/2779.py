@@ -1,30 +1,33 @@
+from collections import deque
 from typing import *
 import inspect
 
 
+
 class Solution:
-    """
-    Solulu.
-    """
-
-    def __init__(self):
-        self.test = "test"
-
-    def Template(self, L: List, i: int):
-        return self.test
-
-    main = Template
+    def maximumBeauty(self, nums: List[int], k: int) -> int:
+        k<<=1
+        nums.sort()
+        nums.append(nums[-1]+k)
+        first=0
+        best=0
+        for last,val in enumerate(nums):
+            best=max(best,last-first)
+            while val-nums[first]>k:
+                first+=1
+        return best
+    main = maximumBeauty
 
 
 TESTS = [
     (
-        ([0, 1], 1),
-        "test"
+        ([4,6,1,2], 2),
+        3
     )
     ,
     (
-        ([0, 1], 2),
-        "also test"
+        ([0, -1, 2, 3, 9], 2),
+        4
     )
 ]
 
