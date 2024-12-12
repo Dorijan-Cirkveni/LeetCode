@@ -1,36 +1,93 @@
-from collections import defaultdict
-from typing import *
-import inspect
+import bisect
+import math
 
 
-data={}
-def getWithLimit(num:int,target:int):
-    if (num,target) in data:
-        return data
-    num, rem=divmod(num,10)
+def sum9(digitCount:int,target:int):
+    upper=digitCount+target-1
+    prefix=1
+    res=0
+    for i in range(target//10+1):
+        single_part=math.comb(upper,digitCount)
+        part_count=math.comb(digitCount,i)
+        res+=single_part*part_count*prefix
+        upper-=10
+        prefix*=-1
     return res
 
-def getAll(n,target):
-    L=[]
+def sum9_brute(digit_count:int, target:int)->int:
+    if digit_count<1:
+        return int(target==0)
+    if digit_count==1:
+        return int(target in range(10))
+    if digit_count==2:
+        return max(min(target,19-target),0)
+    return sum([sum9_brute(digit_count-1,target-i) for i in range(10)])
+
+def sum9_brute_stack(digit_count:int, target:int)->int:
+    if digit_count==0:
+        return int(target==0)
+    if digit_count==1:
+        return int(target in range(10))
+    targets=[1]
+    while digit_count>2:
+        nex_targets=[0]*(len(targets)+9)
+        for i,e in enumerate(targets):
+            for j in range(i):
+                nex_targets[j]+=e
+        targets=nex_targets
+        target-=9
+    return sum([sum9_brute(digit_count-1,target-i) for e in target])
+
+#------------------------------------------------
+
+X=[[1]]
+def step(L):
+    L2=[0]*(len(L)+9)
+    for i,e in enumerate(L):
+        for i2 in range(i,i+9):
+            L2[i2]+=e
+    return L2
+def get_x(count,ind):
+    L=X[count]
+    if ind not in range(len(L)):
+        return 0
+    return L[ind]
+for _ in range(4):
+    X.append(step(X[-1]))
+
+def sumDigits(n,ret:list):
+    s=0
     while n:
-        n,r=divmod(n,10)
-        L.append(r)
-    while L:
-        c=L.pop()
-        res=getWithLimit()
+        n,k=divmod(n,10)
+        s+=k
+        ret.append(k)
+    return s
+
+def countAllWithSum(n):
+    digits=[]
+    n_sum=sumDigits(n,digits)
+    res=1
+    while digits:
+        cur=digits.pop()
+        for i in range(n_sum,n_sum-cur):
+            res+=get_x(len(digits),i)
+        n_sum-=cur
+    return res
+
+def countSymmetric(n):
+    digits=[]
+    n_sum=sumDigits(n,digits)
+    res=0
+    for i in range(len(digits)>>2):
+        tempres=0
+        for cur in range(10**i,10**(i+1)):
+            tempres+=countAllWithSum()
+
+
 
 
 
 class Solution:
-    def countLow(self,low):
-        s=str(low)
-        k=len(s)>>1
-        s1=s[:k]
-        s2=s[k:][::-1]
-        res=int(s1)
-        res-=int(s2<s1)
-        return res
-
     def countSymmetricIntegers(self, low: int, high: int) -> int:
         high-=high==10000
         res=0
@@ -89,7 +146,11 @@ def main():
 
     :return:
     """
-    do_tests(TESTS)
+    res=0
+    for i in range(10,100):
+        temp=countAllWithSum(i)
+        print(i,temp,end=';')
+        res+=temp
     return
 
 
