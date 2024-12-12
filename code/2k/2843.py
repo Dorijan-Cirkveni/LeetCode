@@ -55,33 +55,51 @@ def get_x(count,ind):
 for _ in range(4):
     X.append(step(X[-1]))
 
-def sumDigits(n,ret:list):
+def sumDigits(n):
     s=0
     while n:
         n,k=divmod(n,10)
         s+=k
-        ret.append(k)
     return s
 
-def countAllWithSum(n):
-    digits=[]
-    n_sum=sumDigits(n,digits)
-    res=1
-    while digits:
+def getLittleEndianQueue(n:int)->list[int]:
+    L=[]
+    while n:
+        n,k=divmod(n,10)
+        L.append(k)
+    return L
+
+def countAllWithSum(base:int,limit,skip_zero=False):
+    n_sum=sumDigits(base)
+    digits=getLittleEndianQueue(limit)
+    res=0
+    count=len(digits)
+    while count:
         cur=digits.pop()
-        for i in range(n_sum,n_sum-cur):
-            res+=get_x(len(digits),i)
+        count-=1
+        for i in range(n_sum-skip_zero,n_sum-cur,-1):
+            temp=get_x(count,i)
+            res+=temp
         n_sum-=cur
+        skip_zero=False
+    res+=n_sum==0
     return res
 
 def countSymmetric(n):
-    digits=[]
-    n_sum=sumDigits(n,digits)
+    s=str(n)
+    n_len=len(s)
     res=0
-    for i in range(len(digits)>>2):
+    for i in range(2,n_len+2,2):
         tempres=0
-        for cur in range(10**i,10**(i+1)):
-            tempres+=countAllWithSum()
+        for ns in range(1,9*i):
+            c1=get_x(i,ns,True)
+            tempres+=c1*(c1-c2)
+        res+=tempres
+    if n_len&1==0:
+        first_part=int(s[:n_len>>2])
+        second_part=int(s[n_len>>2:])
+        res+=countAllWithSum(first_part,second_part)
+    return res
 
 
 
@@ -89,19 +107,8 @@ def countSymmetric(n):
 
 class Solution:
     def countSymmetricIntegers(self, low: int, high: int) -> int:
-        high-=high==10000
-        res=0
-        len_a=len(str(low))
-        len_b=len(str(high))
-        len_a_ev=(len_a+1)&-2
-        len_b_ev=len_b|1
-        for i in range(len_a_ev+1,len_b_ev+1,2):
-            res+=int('9'*(i>>1))
-        if len_a==len_a_ev:
-            res+=self.countLow(low)
-        if len_b!=len_b_ev:
-            res-=int('9'*(len_b_ev>>1))
-            res+=self.countLow(high+1)
+        res=countSymmetric(high)
+        res-=countSymmetric(low-1)
         return res
 
     main = countSymmetricIntegers
@@ -147,10 +154,14 @@ def main():
     :return:
     """
     res=0
-    for i in range(10,100):
-        temp=countAllWithSum(i)
-        print(i,temp,end=';')
+    X=[
+        (12,30)
+    ]
+    for E in X:
+        temp=countAllWithSum(*E)
+        print(E,":",temp)
         res+=temp
+    print(res)
     return
 
 
