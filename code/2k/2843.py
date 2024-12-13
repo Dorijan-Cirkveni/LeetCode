@@ -43,7 +43,7 @@ def sum9_brute_stack(digit_count: int, target: int) -> int:
 
 #------------------------------------------------
 
-X = [[1]]
+ALL_FOR_DIGIT_COUNT = [[1]]
 
 
 def step(L):
@@ -55,14 +55,14 @@ def step(L):
 
 
 def get_x(count, ind):
-    L = X[count]
+    L = ALL_FOR_DIGIT_COUNT[count]
     if ind not in range(len(L)):
         return 0
     return L[ind]
 
 
 for _ in range(4):
-    X.append(step(X[-1]))
+    ALL_FOR_DIGIT_COUNT.append(step(ALL_FOR_DIGIT_COUNT[-1]))
 
 
 def sumDigits(n):
@@ -90,29 +90,40 @@ def countAllWithSum(base: int, limit, skip_zero=False):
         cur = digits.pop()
         count -= 1
         for i in range(n_sum - skip_zero, n_sum - cur, -1):
-            temp = get_x(count, i)
+            temp=get_x(count,i)
             res += temp
         n_sum -= cur
         skip_zero = False
     res += n_sum == 0
     return res
 
+def countAllInDigitCount(half_count, prefix=0):
+    res = 0
+    for ns in range(prefix, prefix+1+9 * half_count):
+        c1 = get_x(half_count, ns)
+        c2 = get_x(half_count - 1, ns)
+        res += c1 * (c1 - c2)
+    return res
+
 
 def countSymmetric(n):
+    if n<1001:
+        return n//11
     s = str(n)
     n_len = len(s)
     res = 0
-    for i in range(1, (n_len>>1) + 1):
-        tempres = 0
-        for ns in range(1, 18 * i):
-            c1 = get_x(i, ns)
-            c2 = get_x(i - 1, ns)
-            tempres += c1 * (c1 - c2)
-        res += tempres
-    if n_len & 1 == 0:
-        first_part = int(s[:n_len >> 2])
-        second_part = int(s[n_len >> 2:])
-        res += countAllWithSum(first_part, second_part)
+    half_len=(n_len>>1)|(n_len&1)
+    for i in range(half_len):
+        temp=countAllInDigitCount(i)
+        res+=temp
+    if n_len & 1 != 0:
+        return res
+    first_part = int(s[:half_len])
+    second_part = int(s[half_len:])
+    ten_power=int('9'*(half_len-1))+1
+    for curfirst in range(ten_power,first_part):
+        res += get_x(half_len,sumDigits(curfirst))
+    res += countAllWithSum(first_part, second_part)
     return res
 
 
@@ -127,14 +138,24 @@ class Solution:
 
 TESTS = [
     (
+        (100,10000),
+        615
+    )
+    ,
+    (
         (1, 100),
         9
     )
     ,
 
     (
-        (1, 100),
-        9
+        (1200, 1230),
+        4
+    )
+    ,
+    (
+        (100,1782),
+        44
     )
 ]
 
@@ -176,6 +197,8 @@ def main():
     """
     :return:
     """
+    for i in range(5):
+        print(countAllInDigitCount(i))
     do_tests(TESTS)
     return
 
