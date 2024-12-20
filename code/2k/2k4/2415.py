@@ -15,6 +15,7 @@ def getNext(cur:list[TreeNode]):
     for el in cur:
         ls=el.left,el.right
         fil=filter(is_not_none,ls)
+        res+=list(fil)
     return res
 
 
