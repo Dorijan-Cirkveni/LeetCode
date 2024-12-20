@@ -6,7 +6,7 @@ class Example:
     def testfn(self,v):
         return v**2+self.test
 
-
+null=None
 MAINCLASS=Example
 
 def testfn(functions:list[str],args:list[list]):
