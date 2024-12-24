@@ -40,6 +40,8 @@ def GetDiameterAndMinDistance(graph: list[set[int]]):
 
 
 def GetDiameterAndMinDistanceFromEdges(edges: List[List[int]]):
+    if not edges:
+        return 1,0
     graph = MakeGraph(edges)
     res = GetDiameterAndMinDistance(graph)
     return res
@@ -56,6 +58,14 @@ class Solution:
 
 
 TESTS = [
+    (
+        (
+            [],
+            []
+        ),
+        1
+    )
+    ,
     (
         (
             [[0, 1], [0, 2], [0, 3]],
