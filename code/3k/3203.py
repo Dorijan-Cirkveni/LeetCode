@@ -3,28 +3,27 @@ import inspect
 
 
 class Solution:
-    """
-    Solulu.
-    """
+    def minimumDiameterAfterMerge(self, edges1: List[List[int]], edges2: List[List[int]]) -> int:
+        return -1
 
-    def __init__(self):
-        self.test = "test"
-
-    def Template(self, L: List, i: int):
-        return self.test
-
-    main = Template
+    main = minimumDiameterAfterMerge
 
 
 TESTS = [
     (
-        ([0, 1], 1),
-        "test"
+        (
+            [[0,1],[0,2],[0,3]],
+            [[0,1]]
+        ),
+        3
     )
     ,
     (
-        ([0, 1], 2),
-        "also test"
+        (
+            [[0,1],[0,2],[0,3],[2,4],[2,5],[3,6],[2,7]],
+            [[0,1],[0,2],[0,3],[2,4],[2,5],[3,6],[2,7]]
+        ),
+        5
     )
 ]
 
