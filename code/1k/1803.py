@@ -1,18 +1,42 @@
 from typing import *
+import inspect
+
+
+def calculateThreshold(below: int, power: int):
+    rem = (below >> power) + 1
+    return rem << power
+
+
+def calculateMask(power: int):
+    return (1 << power) - 1
+
+
+def groupBelow(nums: list[int], maxval: int):
+    power = maxval.bit_length()
+    mask = calculateMask(power)
+    threshold = 0
+    nums.sort(reverse=True)
+    curgroup = []
+    groups = []
+    while nums:
+        cur = nums.pop()
+        if cur >= threshold:
+            curgroup = []
+            groups.append(curgroup)
+            threshold = calculateThreshold(cur, power)
+        curgroup.append(cur & mask)
+    return groups
+
+
+def countBelow(nums: int, maxval: int):
+    nums.sort()
 
 
 class Solution:
-    """
-    Solulu.
-    """
+    def countPairs(self, nums: List[int], low: int, high: int) -> int:
+        return -1
 
-    def __init__(self):
-        self.test = "test"
-
-    def Template(self, L: List, i: int):
-        return self.test
-
-    main = Template
+    main = countBelow
 
 
 TESTS = [

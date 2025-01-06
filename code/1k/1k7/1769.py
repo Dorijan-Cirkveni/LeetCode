@@ -2,28 +2,32 @@ from typing import *
 
 
 class Solution:
-    """
-    Solulu.
-    """
+    def minOperations(self, boxes: str) -> List[int]:
+        count = cures = 0
+        for e in boxes:
+            count += e == '1'
+            cures += count
+        res = []
+        for e in boxes[::-1]:
+            cures -= count
+            if e == '1':
+                count -= 2
+            res.append(cures)
+        res.reverse()
+        return res
 
-    def __init__(self):
-        self.test = "test"
-
-    def Template(self, L: List, i: int):
-        return self.test
-
-    main = Template
+    main = minOperations
 
 
 TESTS = [
     (
-        ([0, 1], 1),
-        "test"
+        ("110",),
+        [1,1,3]
     )
     ,
     (
-        ([0, 1], 2),
-        "also test"
+        ("001011",),
+        [11,8,5,4,3,4]
     )
 ]
 
