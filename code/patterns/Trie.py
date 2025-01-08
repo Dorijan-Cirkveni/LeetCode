@@ -7,7 +7,7 @@ class BasicTrieNode:
         self.next = {}
 
     def add(self, c):
-        nex = self.next.get(c, TrieNode())
+        nex = self.next.get(c, BasicTrieNode())
         self.next[c] = nex
         return nex
 
@@ -17,7 +17,7 @@ class BasicTrieNode:
 
 class BasicTrie:
     def __init__(self):
-        self.root = TrieNode()
+        self.root = BasicTrieNode()
 
     def add(self, s):
         cur = self.root
