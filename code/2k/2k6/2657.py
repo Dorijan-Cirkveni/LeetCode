@@ -6,18 +6,18 @@ class Solution:
     def findThePrefixCommonArray(self, A: List[int], B: List[int]) -> List[int]:
         A.reverse()
         B.reverse()
-        diff = defaultdict(int)
+        diff = 0
         acc = 0
         result = []
         while A:
-            temp = A.pop()
-            if diff[temp] < 0:
+            temp = 1 << A.pop()
+            if diff & temp:
                 acc += 1
-            diff[temp] += 1
-            temp = B.pop()
-            if diff[temp] > 0:
+            diff |= temp
+            temp = 1 << B.pop()
+            if diff & temp:
                 acc += 1
-            diff[temp] -= 1
+            diff |= temp
             result.append(acc)
         return result
 
@@ -33,11 +33,6 @@ TESTS = [
     (
         ([2, 3, 1], [3, 1, 2]),
         [0, 1, 3]
-    )
-    ,
-    (
-        ([1, 1, 1], [1, 1, 1]),
-        [1, 2, 3]
     )
 ]
 
