@@ -10,87 +10,105 @@ def offset(i: int, j: int, d: int):
     return i + di, j + dj
 
 
-class PrioritySetQueue:
-    def __init__(self):
-        self.priorities: list[int] = []
-        self.values: dict[int, set] = {}
-
-    def add(self, index, value):
-        if index not in self.values:
-            heapq.heappush(index)
-            self.values[index] = {value}
-            return
-        self.values[index].add(value)
-
-    def __bool__(self):
-        return bool(self.priorities)
-
-    def pop(self):
-        key = heapq.heappop(self.priorities)
-        values = self.values.pop(key)
-        return key, list(values)
-
-
 def listBorderTiles(n: int, m: int):
-    temp = []
-    temp += [(i, 0) for i in range(n - 1)]
+    n -= 1
+    m -= 1
+    temp = [(0, 0), (0, m), (n, 0), (n, m)]
+    temp += [(i, 0) for i in range(1, n)]
     temp += [(0, i) for i in range(1, m)]
-    temp += [(i, m - 1) for i in range(1, n)]
-    temp += [(n - 1, i) for i in range(m - 1)]
+    temp += [(i, m) for i in range(1, n)]
+    temp += [(n, i) for i in range(1, m)]
     return temp
 
 
 class Solution:
     def __init__(self):
-        self.queue = None
+        self.visited = []
+        self.queue = []
         self.m = 0
         self.n = 0
-        self.grid:list[list[int]] = []
+        self.grid: list[list[int]] = []
 
     def get(self, i, j):
         return self.grid[i][j]
 
-    def border(self):
-        for e in self.grid:
-            e.append(INF)
-        self.grid.append([INF]*self.m)
-
-    def get_neigh(self,tile):
-        res=[]
-        for i in range(4):
-            nex=offset(*tile,)
+    def getNeigh(self, i, j):
+        res = []
+        if i > 0:
+            el = i - 1, j
+            res.append(el)
+        if i < self.n - 1:
+            el = i + 1, j
+            res.append(el)
+        if j > 0:
+            el = i, j - 1
+            res.append(el)
+        if j < self.m - 1:
+            el = i, j + 1
+            res.append(el)
+        return res
 
     def set_nexts(self):
         temp = listBorderTiles(self.n, self.m)
         while temp:
-            tile = temp.pop()
-            v = self.get(*tile)
-            self.queue.add(v, tile)
+            entry = 0, temp.pop()
+            heapq.heappush(self.queue, entry)
         return
+
+    def setVisited(self, i, j):
+        self.visited[i][j] = True
+
+    def getVisited(self, i, j):
+        return self.visited[i][j]
+
+    def step(self, height, cur):
+        res = 0
+        if self.getVisited(*cur):
+            return 0
+        self.setVisited(*cur)
+        val = self.get(*cur)
+        if height > val:
+            res = height - val
+            val = height
+        neigh = self.getNeigh(*cur)
+        while neigh:
+            nex = neigh.pop()
+            entry = val, nex
+            if self.getVisited(*nex):
+                continue
+            heapq.heappush(self.queue, entry)
+        return res
 
     def trapRainWater(self, heightMap: List[List[int]]) -> int:
         self.grid = heightMap
         self.n = len(heightMap)
         self.m = len(heightMap[0])
-        self.queue = PrioritySetQueue()
+        self.visited = [[False] * self.m for _ in range(self.n)]
+        self.queue = []
         self.set_nexts()
+        res = 0
         while self.queue:
-            height, values = self.queue.pop()
-            while values:
-
+            height, cur = heapq.heappop(self.queue)
+            res += self.step(height, cur)
+        return res
 
     main = trapRainWater
 
 
 TESTS = [
     (
-        ([0, 1], 1),
-        "test"
+        ([[12, 13, 1, 12], [13, 4, 13, 12], [13, 8, 10, 12], [12, 13, 12, 12], [13, 13, 13, 13]],),
+        14
     )
     ,
     (
-        ([0, 1], 2),
-        "also test"
+        ([[1, 4, 3, 1, 3, 2], [3, 2, 1, 3, 2, 4], [2, 3, 3, 2, 3, 1]],),
+        4
+    )
+    ,
+    (
+        ([[3, 3, 3, 3, 3], [3, 2, 2, 2, 3], [3, 2, 1, 2, 3], [3, 2, 2, 2, 3], [3, 3, 3, 3, 3]],),
+        10
     )
 ]
 
@@ -120,6 +138,7 @@ def main():
 
     :return:
     """
+    print(listBorderTiles(3, 6))
     do_tests(TESTS)
     return
 
