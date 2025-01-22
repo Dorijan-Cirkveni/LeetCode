@@ -9,12 +9,12 @@ class Solution:
         cur_list:list[tuple]=[]
         for i,line in enumerate(isWater):
             for j,el in enumerate(line):
+                line[j]=0 if el else INF
                 if not el:
                     continue
-                line[j]=0 if el else INF
                 cur_list.append((i,j))
-            line.append(INF)
-        isWater.append([INF]*len(isWater[0]))
+            line.append(0)
+        isWater.append([0]*len(isWater[0]))
         height=0
         while cur_list:
             height+=1
@@ -23,7 +23,7 @@ class Solution:
                 i,j=cur_list.pop()
                 nex_temp=[(i-1,j),(i+1,j),(i,j-1),(i,j+1)]
                 for di,dj in nex_temp:
-                    if isWater[di][dj]==height:
+                    if isWater[di][dj]<=height:
                         continue
                     isWater[di][dj]=height
                     nex_list.append((di,dj))
