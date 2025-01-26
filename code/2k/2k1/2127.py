@@ -1,109 +1,48 @@
-import collections
 from typing import *
-
-from dataclasses import dataclass
-
-
-@dataclass
-class Merge:
-    count: int
-    best: int
 
 
 class Solution:
-    def __init__(self):
-        self.starts: list[tuple[int, int]] = []
-        self.merges: dict[int, Merge] = {}
-        self.favorite: list[int] = []
-
-    def findMergesAndStarts(self) -> None:
-        counts = [0] * len(self.favorite)
-        circle = True
-        for e in self.favorite:
-            if counts[e]:
-                circle = False
-            counts[e] += 1
-        if circle:
-            return
-        self.merges = {}
-        self.starts = []
-        i = len(counts)
-        while counts:
-            i -= 1
-            cur = counts.pop()
-            if cur == 1:
-                continue
-            if cur == 0:
-                self.starts.append((i, 0))
-                continue
-            self.merges[i] = Merge(cur, 0)
-
-    def step(self, cur):
-        nex = self.favorite[cur]
-        self.favorite[cur] = cur
-        return nex
-
-    def findDuos(self):
-        duos = 0
-        for i, e in enumerate(self.favorite):
-            if i == e:
-                continue
-            duos += self.favorite[e] == i
-        return duos
-
     def maximumInvitations(self, favorite: List[int]) -> int:
-        self.favorite = favorite
-        self.findMergesAndStarts()
-        if not self.merges:
-            return len(self.favorite)
-        while self.starts:
-            cur, count = self.starts.pop()
-            delta_res = 0
-            while cur not in self.merges:
-                delta_res += 1
-                cur = self.step(cur)
-            count += delta_res
-            mcur = self.merges[cur]
-            if count > mcur.best:
-                mcur.best = count
-            mcur.count -= 1
-            if not mcur.count:
-                self.merges.pop(cur)
-                self.starts.append((cur, mcur.best))
-        merges: list = list(self.merges)
-        res = 0
-        merge_res = 0
-        while merges:
-            start = merges.pop()
-            if start not in self.merges:
+        incounts = [0] * len(favorite)
+        for e in favorite:
+            incounts[e] += 1
+        nexstack = [i for i, e in enumerate(incounts) if not e]
+        visited = [False] * len(favorite)
+        lens = {}
+        while nexstack:
+            cur = nexstack.pop()
+            visited[cur] = True
+            size = lens.get(cur, 0)
+            size += 1
+            cur = favorite[cur]
+            incounts[cur] -= 1
+            lens[cur] = max(lens.get(cur, 0), size)
+            if not incounts[cur]:
+                nexstack.append(cur)
+        maxcycle = 0
+        totalchains = 0
+        for i, e in enumerate(favorite):
+            if visited[i]:
                 continue
-            cur = start
-            mer: Merge = self.merges.pop(cur)
-            cur = self.favorite[cur]
-            delta_res = 1
-            while cur != start:
-                delta_res += 1
-                cur = self.step(cur)
-            cur = self.favorite[cur]
-            self.favorite[start] = start
-            if delta_res == 2:
-                if cur in self.merges:
-                    delta_res += self.merges.pop(cur).best
-                merge_res += delta_res + mer.best
-                continue
-            if res < delta_res:
-                res = delta_res
-        if res < merge_res:
-            res = merge_res
-        res += self.findDuos()
-        return res
+            count = 1
+            visited[i] = True
+            while not visited[e]:
+                visited[e] = True
+                count += 1
+                e = favorite[e]
+            if count == 2:
+                e = favorite[e]
+                totalchains += 2 + lens.pop(i,0) + lens.pop(e,0)
+            elif maxcycle < count:
+                maxcycle = count
+        return max(maxcycle, totalchains)
 
     main = maximumInvitations
 
 
 TESTS = [
     (
-        ([3,0,1,4,1],),
+        ([3, 0, 1, 4, 1],),
         4
     )
     ,
