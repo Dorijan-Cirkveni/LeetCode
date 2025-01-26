@@ -37,44 +37,40 @@ class Solution:
                 continue
             self.merges[i] = Merge(cur, 0)
 
-    def seekCycle(self, start: int):
-        cur = start
-        tempcount = 0
-        while cur not in self.merges:
-            cur = self.favorite[cur]
-            tempcount += 1
-            if cur == start:
-                break
-        return cur, tempcount
-
     def maximumInvitations(self, favorite: List[int]) -> int:
         self.favorite = favorite
         self.findMergesAndStarts()
         if not self.merges:
             return len(self.favorite)
-        res = 0
         while self.starts:
-            start, count = self.starts.pop()
-            cur, delta_res = self.seekCycle(start)
-            cur: int
-            delta_res: int
-            if cur == start:
-                res += delta_res
-                break
+            cur, count = self.starts.pop()
+            delta_res = 0
+            while cur not in self.merges:
+                delta_res += 1
+                cur = self.favorite[cur]
             count += delta_res
             mcur = self.merges[cur]
-            mcur.count -= 1
             if count > mcur.best:
                 mcur.best = count
+            mcur.count -= 1
             if not mcur.count:
                 self.merges.pop(cur)
                 self.starts.append((cur, mcur.best))
         merges: list = list(self.merges)
+        res = 0
         while self.merges:
-            cur = merges.pop()
+            cur = merges[-1]
             mer: Merge = self.merges.pop(cur)
-            _, delta_res = self.seekCycle(cur)
-            res += delta_res + mer.best
+            cur = self.favorite[cur]
+            delta_res = 1
+            while cur != merges[-1]:
+                delta_res += 1
+                cur = self.favorite[cur]
+            tempres = delta_res
+            if delta_res == 2:
+                tempres += mer.best
+            if res < tempres:
+                res = tempres
         return res
 
     main = maximumInvitations
