@@ -26,6 +26,8 @@ class Solution:
             bestValues(lis, num)
         res = -1
         for lis in by_sum.values():
+            if lis[-1]<0:
+                continue
             res = max(res, sum(lis))
         return res
 
