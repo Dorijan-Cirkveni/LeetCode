@@ -1,24 +1,59 @@
 from typing import *
 
 
+# Definition for a binary tree node.
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+
+def parseRaw(traversal: str):
+    level = 0
+    curnum = ""
+    res = []
+    traversal += '-'
+    for e in traversal:
+        if e != '-':
+            curnum += e
+            continue
+        if not curnum:
+            level += 1
+            continue
+        cur = level, int(curnum)
+        res.append(cur)
+        level, curnum = 1, ""
+    return res
+
+
 class Solution:
-    """
-    Solulu.
-    """
+    def recoverFromPreorder(self, traversal: str) -> Optional[TreeNode]:
+        actual_traversal = parseRaw(traversal)
+        actual_traversal.reverse()
+        num = actual_traversal.pop()[1]
+        node_stack = [TreeNode(num)]
+        while actual_traversal:
+            level, num = actual_traversal.pop()
+            new_node = TreeNode(num)
+            if level >= len(node_stack):
+                if node_stack:
+                    node_stack[-1].left = new_node
+                node_stack.append(new_node)
+                continue
+            while level < len(node_stack):
+                node_stack.pop()
+            node_stack[-1].right = new_node
+            node_stack.append(new_node)
+        return node_stack[0]
 
-    def __init__(self):
-        self.test = "test"
-
-    def Template(self, L: List, i: int):
-        return self.test
-
-    main = Template
+    main = recoverFromPreorder
 
 
 TESTS = [
     (
-        ([0, 1], 1),
-        "test"
+        ("1-2--3--4-5--6--7",),
+        None
     )
     ,
     (
