@@ -2,28 +2,74 @@ from typing import *
 
 
 class Solution:
-    """
-    Solulu.
-    """
-
     def __init__(self):
-        self.test = "test"
+        self.ends = {}
+        self.starts = {}
+        self.queries = []
 
-    def Template(self, L: List, i: int):
-        return self.test
+    def getLimits(self,queries):
+        starts = {}
+        ends = {}
+        query_results=[]
+        existing={}
+        for a,b,v in queries:
 
-    main = Template
+            starts.setdefault(a, dict())[b]=i
+            ends.setdefault(b, dict())[a]=i
+            i+=1
+
+        self.starts=starts
+        self.ends=ends
+
+    def getBest(self, nums:List[int]):
+        cur_best=0
+        cur_list=[]
+        for i,e in enumerate(nums):
+            starts=self.starts.get(i,set())
+            if starts:
+                cur_list+=list(starts)
+                cur_list.sort()
+            if e:
+                for ind in cur_list:
+                    e-=self.queries[ind]
+                    if e>0:
+                        continue
+                    if cur_best<=ind:
+                        cur_best=ind+1
+                    break
+                else:
+                    return -1
+            ends=self.ends.get(i,set())
+            if ends:
+                cur_list=[e for e in cur_list if e not in ends]
+        return cur_best
+
+
+    def minZeroArray(self, nums: List[int], queries: List[List[int]]) -> int:
+        self.queries = queries
+        self.getLimits()
+        res=self.getBest(nums)
+        return res
+
+    main = minZeroArray
 
 
 TESTS = [
     (
-        ([0, 1], 1),
-        "test"
+        ([2,0,0,8,6],[[0,1,2],[0,3,1],[4,4,2],[0,1,2],[3,3,4],[2,3,1],[0,4,2],[3,4,3],[4,4,5],[0,4,3],[0,3,2],[0,3,1],[2,3,4],[3,4,3],[3,4,5]]),8
     )
     ,
     (
-        ([0, 1], 2),
-        "also test"
+        ([7,6,8],[[0,0,2],[0,1,5],[2,2,5],[0,2,4]]),4
+    )
+    ,
+    (
+        ([2,0,2], [[0,2,1],[0,2,1],[1,1,3]]),
+        2
+    ),
+    (
+        ([500000]*500000,[[0,500000-1,5]]*100000),
+        100000
     )
 ]
 
