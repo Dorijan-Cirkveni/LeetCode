@@ -3,7 +3,24 @@ from typing import *
 
 class Solution:
     def minZeroArray(self, nums: List[int], queries: List[List[int]]) -> int:
-        
+        n,m=len(nums),len(queries)
+        freq=[0]*(n+1)
+        acc, i_que=0,0
+        for i in range(n):
+            while acc<nums[i]-freq[i]:
+                if i_que>=m:
+                    return -1
+                left, right, val=queries[i_que]
+                if right<i:
+                    i_que+=1
+                    continue
+                freq[max(left,i)]+=val
+                freq[right+1]-=val
+                i_que+=1
+            acc+=freq[i]
+        return i_que
+
+
 
     main = minZeroArray
 
