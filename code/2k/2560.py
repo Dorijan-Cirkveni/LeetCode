@@ -1,29 +1,45 @@
+import bisect
 from typing import *
 
 
 class Solution(object):
+    def __init__(self):
+        self.k = 0
+        self.nums = []
+
+    def checkCap(self, cap:int):
+        steal = 0
+        last_stolen = False
+        for e in self.nums:
+            if last_stolen:
+                last_stolen = False
+                continue
+            if e > cap:
+                continue
+            steal += 1
+            if steal == self.k:
+                return True
+            last_stolen = True
+        return False
+
     def minCapability(self, nums, k):
         """
         :type nums: List[int]
         :type k: int
         :rtype: int
         """
-        minimums = [[0, 0]]
-        minimums[0][False] = 0
-        for house in nums:
-            n = len(minimums) - 1
-            if n < k:
-                minimums.append([float("inf")] * 2)
-                n += 1
-            cur_count = minimums[-1]
-            for i in range(n, -1, -1):
-                last_count = minimums[i]
-                steal = max(min(cur_count[False], last_count[False]), house)
-                if last_count[False] > last_count[True]:
-                    last_count[False] = last_count[True]
-                cur_count[True] = steal
-                cur_count = last_count
-        return min(minimums[-1])
+        self.nums = nums
+        self.k = k
+        x0 = xM = nums[0]
+        for e in nums:
+            if e < x0:
+                x0 = e
+            elif e > xM:
+                xM = e
+        ran = range(x0,xM)
+        res_ind = bisect.bisect_left(ran, 1, key=self.checkCap)
+        res = x0 + res_ind
+        return res
 
     main = minCapability
 
