@@ -8,16 +8,20 @@ class Solution(object):
         :type k: int
         :rtype: int
         """
-        minimums = [[float("inf")] * 2 for _ in range(k+1)]
+        minimums = [[0, 0]]
         minimums[0][False] = 0
         for house in nums:
-            cur_count = minimums[k]
-            for i in range(k, -1, -1):
+            n = len(minimums) - 1
+            if n < k:
+                minimums.append([float("inf")] * 2)
+                n += 1
+            cur_count = minimums[-1]
+            for i in range(n, -1, -1):
                 last_count = minimums[i]
                 steal = max(min(cur_count[False], last_count[False]), house)
-                skip = min(last_count[False], last_count[True])
+                if last_count[False] > last_count[True]:
+                    last_count[False] = last_count[True]
                 cur_count[True] = steal
-                last_count[False] = skip
                 cur_count = last_count
         return min(minimums[-1])
 
@@ -26,12 +30,12 @@ class Solution(object):
 
 TESTS = [
     (
-        ([2,3,5,9], 2),
+        ([2, 3, 5, 9], 2),
         5
     )
     ,
     (
-        ([2,7,9,3,1], 2),
+        ([2, 7, 9, 3, 1], 2),
         2
     )
 ]
