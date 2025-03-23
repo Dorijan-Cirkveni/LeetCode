@@ -1,12 +1,16 @@
 class UndirectedGraph:
     def __init__(self, links: dict = None):
         self.links = links if links else {}
-        self.start=None
+        self.start = None
 
     def addLink(self, a, b):
         self.links.setdefault(a, set()).add(b)
         self.links.setdefault(b, set()).add(a)
-        self.start=a
+        self.start = a
+
+    def addLinks(self,links:list):
+        for link in links:
+            self.addLink(*link)
 
     def extractGraph(self, start):
         found = {start}
