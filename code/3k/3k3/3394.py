@@ -26,6 +26,7 @@ class Solution:
         if len(rectangles)<3:
             return False
         rec_x,rec_y=splitRectangles(rectangles)
+        rectangles=None
         if groupUntilThreshold(rec_x):
             return True
         if groupUntilThreshold(rec_y):
