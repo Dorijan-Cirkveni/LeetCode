@@ -1,29 +1,54 @@
+from collections import defaultdict
 from typing import *
 
 
 class Solution:
-    """
-    Solulu.
-    """
+    def minOperations(self, grid: List[List[int]], x: int) -> int:
+        total=len(grid)*len(grid[0])
+        offset=grid[0][0]%x
+        counts=defaultdict(int)
+        for e in grid:
+            for f in e:
+                counts[f-offset]+=1
+        grid=None
+        _grid=grid
+        for e in counts:
+            if e%x:
+                return -1
+        counts=[(e//x,v) for e,v in counts.items()]
+        counts.sort()
+        i=-1
+        while total>0:
+            i+=1
+            new_total=total-counts[i][1]*2
+            if -new_total>total:
+                break
+            total=new_total
+        res=0
+        avg=counts[i][0]
+        for e,v in counts:
+            res+=abs(e-avg)*v
+        counts=None
+        _counts=counts
+        return res
 
-    def __init__(self):
-        self.test = "test"
 
-    def Template(self, L: List, i: int):
-        return self.test
 
-    main = Template
+
+
+    main =  minOperations
 
 
 TESTS = [
+    (([[529,529,989],[989,529,345],[989,805,69]],92),25),
     (
-        ([0, 1], 1),
-        "test"
+        ([[2,4,6,8]],2),
+        4
     )
     ,
     (
-        ([0, 1], 2),
-        "also test"
+        ([[1,5,2,3]],1),
+        5
     )
 ]
 
