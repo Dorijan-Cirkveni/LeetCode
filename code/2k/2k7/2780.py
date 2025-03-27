@@ -4,37 +4,36 @@ from typing import *
 
 class Solution:
     def minimumIndex(self, nums: List[int]) -> int:
-        count=collections.Counter(nums)
-        nh=len(nums)//2
-        for e,v in count:
-            if v>nh:
-                dominant=e
+        count = collections.Counter(nums)
+        nh = len(nums) // 2
+        for e, v in count.items():
+            if v > nh:
+                dominant = e
                 break
         else:
             return -1
-        left,right=0,count[dominant]
-        n=len(nums)
-        for i,e in enumerate(nums):
-            if e==dominant:
-                left+=1
-                right-=1
-            if left>i//2 and right>(n-i)//2:
-                return i
+        left, right = 0, count[dominant]
+        n = len(nums)
+        for i, e in enumerate(nums):
+            if left > (i // 2) and right > (n - i) // 2:
+                return i-1
+            if e == dominant:
+                left += 1
+                right -= 1
         return -1
-
 
     main = minimumIndex
 
 
 TESTS = [
     (
-        ([0, 1], 1),
-        "test"
+        ([0, 1, 1, 1],),
+        2
     )
     ,
     (
-        ([0, 1], 2),
-        "also test"
+        ([0, 1, 1],),
+        -1
     )
 ]
 
