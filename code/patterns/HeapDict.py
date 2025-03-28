@@ -16,7 +16,7 @@ class HeapDict:
     def pop(self):
         if not self.heap:
             return []
-        cost = heappop(self.heap)
+        cost = heapq.heappop(self.heap)
         res = self.dict.pop(cost)
         return res
 
