@@ -8,7 +8,7 @@ class HeapDict:
 
     def push(self, cost, value):
         if cost not in self.dict:
-            heapq.heappush(cost)
+            heapq.heappush(self.heap, cost)
             self.dict[cost] = []
         self.dict[cost].append(value)
 

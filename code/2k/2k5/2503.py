@@ -9,11 +9,11 @@ class HeapDict:
 
     def push(self, cost, value):
         if cost not in self.dict:
-            heapq.heappush(cost)
+            heapq.heappush(self.heap, cost)
             self.dict[cost] = []
         self.dict[cost].append(value)
 
-    def pop(self)->tuple[int,list]:
+    def pop(self) -> tuple[int, list]:
         if not self.heap:
             return []
         cost = heapq.heappop(self.heap)
@@ -52,12 +52,13 @@ class Grid:
     def getNeigh(self, i: int, j: int):
         return [(i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1)]
 
-    def getValidNeigh(self, el: tuple, sentinels: set[int], curlist:list, nexset=set):
+    def getValidNeigh(self, el: tuple, sentinel: int, curval: int, curlist: list, nexlist: list):
         for nel in self.getNeigh(*el):
-            val = self.getTile(*nel)
-            if val in sentinels:
+            val = self.popTile(*el, new_v=sentinel)
+            if val == sentinel:
                 continue
-            output_method(nel)
+            chosenlist = curlist if val == curval else nexlist
+            chosenlist.append(nel)
 
     def getNumberCoverage(self, numbers: list[int], sentinel: int):
         numbers.append(sentinel)
@@ -69,40 +70,41 @@ class Grid:
         res = {}
         acc = 0
         while curheap:
-            cost, curset = curheap.pop()
-            while numbers[-1]<=cost:
-                cur=numbers.pop()
-            nexset = set()
-            for cur in curset:
-                self.getValidNeigh(cur, sentinels={sentinel}, output_method=nexset.add)
-
-            for nex in nexset:
-                cost=
+            cost, curlist = curheap.pop()
+            while numbers[-1] <= cost:
+                cur = numbers.pop()
+                res[cur] = acc
+            nexlist = []
+            while curlist:
+                cur = curlist.pop()
+                self.getValidNeigh(cur, sentinel, cost, curlist, nexlist)
+            for nex in nexlist:
+                cost = self.getTile(*nex)
+                curheap.push(cost, nex)
         return res
 
 
 class Solution:
-    """
-    Solulu.
-    """
+    def maxPoints(self, grid: List[List[int]], queries: List[int]) -> List[int]:
+        grid = Grid(grid)
+        grid: Grid
+        grid.sentinels(1000001)
+        unique_queries = list(set(queries))
+        res_dict: dict = grid.getNumberCoverage(unique_queries, 1000001)
+        res = [res_dict[e] for e in queries]
+        return res
 
-    def __init__(self):
-        self.test = "test"
-
-    def Template(self, L: List, i: int):
-        return self.test
-
-    main = Template
+    main = maxPoints
 
 
 TESTS = [
     (
-        ([0, 1], 1),
+        ([[1,2,3],[2,5,7],[3,5,1]], [5,6,2]),
         "test"
     )
     ,
     (
-        ([0, 1], 2),
+        ([[5,2,1],[1,1,2]], [3]),
         "also test"
     )
 ]
