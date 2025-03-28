@@ -18,7 +18,7 @@ class HeapDict:
             return []
         cost = heapq.heappop(self.heap)
         res = self.dict.pop(cost)
-        return res
+        return cost, res
 
     def __bool__(self):
         return bool(self.heap)
@@ -68,6 +68,7 @@ class Grid:
         curheap.push(curcost, cur)
         res = 0
         while curheap:
+
             nexset = set()
             for cur in curset:
                 res += self.popTile(*cur)

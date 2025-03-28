@@ -17,7 +17,7 @@ class HeapDict:
             return []
         cost = heapq.heappop(self.heap)
         res = self.dict.pop(cost)
-        return res
+        return cost, res
 
     def __bool__(self):
         return bool(self.heap)
