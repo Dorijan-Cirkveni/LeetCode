@@ -1,5 +1,4 @@
 import heapq
-from heapq import heappop
 
 
 class HeapDict:
@@ -19,6 +18,9 @@ class HeapDict:
         cost = heapq.heappop(self.heap)
         res = self.dict.pop(cost)
         return res
+
+    def __bool__(self):
+        return bool(self.heap)
 
 
 def main():

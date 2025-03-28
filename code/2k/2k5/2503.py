@@ -10,8 +10,8 @@ class HeapDict:
     def push(self, cost, value):
         if cost not in self.dict:
             heapq.heappush(cost)
-            self.dict[cost] = []
-        self.dict[cost].append(value)
+            self.dict[cost] = set()
+        self.dict[cost].add(value)
 
     def pop(self):
         if not self.heap:
@@ -19,6 +19,9 @@ class HeapDict:
         cost = heapq.heappop(self.heap)
         res = self.dict.pop(cost)
         return res
+
+    def __bool__(self):
+        return bool(self.heap)
 
 
 class Grid:
@@ -56,20 +59,21 @@ class Grid:
                 continue
             output_method(nel)
 
-    def getNumberCoverage(self,numbers:list[int]):
-        numbers
-
-    def clearIsland(self, start: tuple):
-        curset = {start}
+    def getNumberCoverage(self, numbers: list[int], sentinel: int):
+        numbers.append(sentinel)
+        numbers.sort(reverse=True)
+        curheap = HeapDict()
+        cur = 0, 0
+        curcost = self.getTile(*cur)
+        curheap.push(curcost, cur)
         res = 0
-        while curset:
+        while curheap:
             nexset = set()
             for cur in curset:
                 res += self.popTile(*cur)
-                self.getValidNeigh(cur, sentinels={0}, output_method=nexset.add)
+                self.getValidNeigh(cur, sentinels={sentinel}, output_method=nexset.add)
             curset = nexset
         return res
-
 
 
 class Solution:
