@@ -27,7 +27,8 @@ class Grid:
         return [(i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1)]
 
     def getValidNeigh(self, el: tuple, sentinels: set[int], output_method: callable):
-        for nel in self.getNeigh(*el):
+        neighlist = self.getNeigh(*el)
+        for nel in neighlist:
             val = self.getTile(*nel)
             if val in sentinels:
                 continue

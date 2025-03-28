@@ -52,20 +52,25 @@ class Grid:
     def getNeigh(self, i: int, j: int):
         return [(i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1)]
 
-    def getValidNeigh(self, el: tuple, sentinel: int, curval: int, curlist: list, nexlist: list):
-        for nel in self.getNeigh(*el):
-            val = self.popTile(*el, new_v=sentinel)
+    def getValidNeigh(self, el: tuple, sentinel: int, curval: int, curlist: list, nexdict: dict):
+        neighlist = self.getNeigh(*el)
+        for nel in neighlist:
+            val = self.popTile(*nel, new_v=sentinel)
             if val == sentinel:
                 continue
-            chosenlist = curlist if val == curval else nexlist
-            chosenlist.append(nel)
+            print(nel,val)
+            if val == curval:
+                curlist.append(nel)
+                continue
+            nexdict[nel]=val
+        return
 
     def getNumberCoverage(self, numbers: list[int], sentinel: int):
         numbers.append(sentinel)
         numbers.sort(reverse=True)
         curheap = HeapDict()
         cur = 0, 0
-        curcost = self.getTile(*cur)
+        curcost = self.popTile(*cur,new_v=sentinel)
         curheap.push(curcost, cur)
         res = {}
         acc = 0
@@ -74,12 +79,12 @@ class Grid:
             while numbers[-1] <= cost:
                 cur = numbers.pop()
                 res[cur] = acc
-            nexlist = []
+            nexdict = {}
             while curlist:
                 cur = curlist.pop()
-                self.getValidNeigh(cur, sentinel, cost, curlist, nexlist)
-            for nex in nexlist:
-                cost = self.getTile(*nex)
+                acc += 1
+                self.getValidNeigh(cur, sentinel, cost, curlist, nexdict)
+            for nex, cost in nexdict.items():
                 curheap.push(cost, nex)
         return res
 
