@@ -91,12 +91,13 @@ class Grid:
 
 class Solution:
     def maxPoints(self, grid: List[List[int]], queries: List[int]) -> List[int]:
+        backup=len(grid)*len(grid[0])
         grid = Grid(grid)
         grid: Grid
         grid.sentinels(1000001)
         unique_queries = list(set(queries))
         res_dict: dict = grid.getNumberCoverage(unique_queries, 1000001)
-        res = [res_dict[e] for e in queries]
+        res = [res_dict.get(e,backup) for e in queries]
         return res
 
     main = maxPoints
