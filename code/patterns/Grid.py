@@ -17,10 +17,10 @@ class Grid:
     def setTile(self, i, j, v):
         self.core[i][j] = v
 
-    def popTile(self, i: int, j: int, v=0):
+    def popTile(self, i: int, j: int, new_v=0):
         line = self.core[i]
         v = line[j]
-        line[j] = 0
+        line[j] = new_v
         return v
 
     def getNeigh(self, i: int, j: int):

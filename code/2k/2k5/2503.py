@@ -10,10 +10,10 @@ class HeapDict:
     def push(self, cost, value):
         if cost not in self.dict:
             heapq.heappush(cost)
-            self.dict[cost] = set()
-        self.dict[cost].add(value)
+            self.dict[cost] = []
+        self.dict[cost].append(value)
 
-    def pop(self):
+    def pop(self)->tuple[int,list]:
         if not self.heap:
             return []
         cost = heapq.heappop(self.heap)
@@ -43,16 +43,16 @@ class Grid:
     def setTile(self, i, j, v):
         self.core[i][j] = v
 
-    def popTile(self, i: int, j: int, v=0):
+    def popTile(self, i: int, j: int, new_v=0):
         line = self.core[i]
         v = line[j]
-        line[j] = 0
+        line[j] = new_v
         return v
 
     def getNeigh(self, i: int, j: int):
         return [(i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1)]
 
-    def getValidNeigh(self, el: tuple, sentinels: set[int], output_method: callable):
+    def getValidNeigh(self, el: tuple, sentinels: set[int], curlist:list, nexset=set):
         for nel in self.getNeigh(*el):
             val = self.getTile(*nel)
             if val in sentinels:
@@ -66,14 +66,18 @@ class Grid:
         cur = 0, 0
         curcost = self.getTile(*cur)
         curheap.push(curcost, cur)
-        res = 0
+        res = {}
+        acc = 0
         while curheap:
-
+            cost, curset = curheap.pop()
+            while numbers[-1]<=cost:
+                cur=numbers.pop()
             nexset = set()
             for cur in curset:
-                res += self.popTile(*cur)
                 self.getValidNeigh(cur, sentinels={sentinel}, output_method=nexset.add)
-            curset = nexset
+
+            for nex in nexset:
+                cost=
         return res
 
 
