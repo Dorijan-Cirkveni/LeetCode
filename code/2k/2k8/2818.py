@@ -21,13 +21,17 @@ generatePrimes(10000)
 
 
 def getPrimeScore(num: int) -> int:
-    score = 0
+    score = 1 ^ (num % 2)
     while num & 1 == 0:
-        score += 1
         num >>= 1
     for e in PRIMES:
+        if e * e > num:
+            break
+        if num % e == 0:
+            continue
+        score += 1
+        num //= e
         while num % e == 0:
-            score += 1
             num //= e
     score += num != 1
     return score
@@ -71,23 +75,17 @@ class Solution:
         return right
 
     def maximumScore(self, nums: List[int], k: int) -> int:
-        print()
         self.nums = nums
         self.getPrimeScores()
-        print(self.nums)
-        print([self.prime_scores[e] for e in nums])
         left = self.createLeft(nums)
         right = self.createRight(nums)
-        print(left)
-        print(right)
-        enumerated = [(e,i) for i,e in enumerate(nums)]
+        enumerated = [(e, i) for i, e in enumerate(nums)]
         enumerated.sort()
         ans = 1
         while k and enumerated:
             e, i = enumerated.pop()
             lel, rel = left[i], right[i]
             cnt = (i - lel) * (rel - i)
-            print(i, e, lel, rel, cnt)
             if cnt > k:
                 cnt = k
             ans *= pow(e, cnt, MOD)
