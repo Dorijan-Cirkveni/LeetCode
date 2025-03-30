@@ -27,7 +27,7 @@ def getPrimeScore(num: int) -> int:
     for e in PRIMES:
         if e * e > num:
             break
-        if num % e == 0:
+        if num % e != 0:
             continue
         score += 1
         num //= e
