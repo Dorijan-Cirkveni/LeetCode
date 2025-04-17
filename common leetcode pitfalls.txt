@@ -1,0 +1,6 @@
+- not reading the task properly
+- not thinking about the task before coding
+- using bad variable names
+- deferring to bad default variable names imposed by task
+- not using a good IDE
+- lack of type hints (Python)
